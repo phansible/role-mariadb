@@ -1,11 +1,12 @@
 ---
 # Retrieve the current hostname, because {{ ansible_hostname }} still contains the old name
 - shell: hostname
+  changed_when: false
   register: current_hostname
 
 - name: Add MariaDB-Repository
   sudo: yes
-  apt_repository: repo='deb http://mirror3.layerjet.com/mariadb/repo/10.1/ubuntu {{ ansible_distribution_release }} main' state=present
+  apt_repository: repo='deb [arch=amd64,i386] http://lon1.mirrors.digitalocean.com/mariadb/repo/10.1/ubuntu {{ ansible_distribution_release }} main' state=present
 
 - name: Add Key for MariaDB Repository
   sudo: yes
