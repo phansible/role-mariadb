@@ -18,8 +18,11 @@
 
 - name: mariadb | Install MariaDB Packages
   become: yes
-  apt: pkg={{ item }} state=latest
-  with_items:
+  apt: 
+    name: "{{ packages }}"
+    state: latest
+  vars:
+    packages:
     - mariadb-server
     - python-mysqldb
 
