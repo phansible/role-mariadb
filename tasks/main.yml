@@ -21,6 +21,7 @@
   apt: 
     name: "{{ packages }}"
     state: latest
+    allow_unauthenticated: yes
   vars:
     packages:
     - mariadb-server
