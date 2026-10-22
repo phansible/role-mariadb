@@ -48,6 +48,10 @@
       - python3-pymysql
     state: latest
 
+- name: mariadb | Ensure MariaDB is running
+  become: yes
+  service: name=mariadb state=started enabled=yes
+
 - name: mariadb | Update root password for all root accounts
   become: yes
   ansible.mysql.mysql_user:
