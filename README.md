@@ -1,6 +1,6 @@
 # Phansible Role: MariaDB
 
-[![Build Status](https://travis-ci.org/phansible/role-mariadb.svg?branch=master)](https://travis-ci.org/phansible/role-mariadb)
+[![CI](https://github.com/phansible/role-mariadb/actions/workflows/ci.yml/badge.svg)](https://github.com/phansible/role-mariadb/actions/workflows/ci.yml)
 
 An Ansible Role that installs [MariaDB](https://mariadb.org/) on Ubuntu specifically created with [Phansible](http://phansible.com/) in mind.
 
