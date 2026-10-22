@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      PLAYBOOK: test.yml
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      # Travis VMs answered yes to apt prompts by default
+      - name: Configure apt like Travis
+        run: echo 'APT::Get::Assume-Yes "true";' | sudo tee /etc/apt/apt.conf.d/90assume-yes
+
+      - name: 'Remove any MySQL package to ensure a clean starting state'
+        run: 'sudo apt-get remove --purge ''mysql*'''
+
+      - name: 'Before install: sudo apt-get autoremove'
+        run: 'sudo apt-get autoremove'
+
+      - name: 'Before install: sudo apt-get autoclean'
+        run: 'sudo apt-get autoclean'
+
+      - name: 'Before install: sudo rm -rf /var/lib/mysql'
+        run: 'sudo rm -rf /var/lib/mysql'
+
+      - name: 'Before install: sudo truncate -s 0 /var/log/mysql/error.log'
+        run: 'sudo truncate -s 0 /var/log/mysql/error.log'
+
+      - name: 'Install Ansible'
+        run: 'pip install ansible'
+
+      - name: 'Add ansible.cfg to pick up roles path'
+        run: '{ echo ''[defaults]''; echo ''roles_path = ../''; } >> ansible.cfg'
+
+      - name: 'Check the role/playbook''s syntax'
+        run: 'ansible-playbook -i tests/inventory tests/$PLAYBOOK --syntax-check'
+
+      - name: 'Run the role/playbook with ansible-playbook'
+        run: 'ansible-playbook -i tests/inventory tests/$PLAYBOOK --connection=local --become'
+
+      - name: 'Run the role/playbook again, checking to make sure it''s idempotent'
+        run: 'ansible-playbook -i tests/inventory tests/$PLAYBOOK --connection=local --become | grep -q ''changed=0.*failed=0'' && (echo ''Idempotence test: pass'' && exit 0) || (echo ''Idempotence test: fail'' && exit 1)'
